@@ -1,0 +1,16 @@
+
+.main{
+    display: flex;
+    align-items: center;
+    min-height: 68vh;
+}
+
+.content h2{
+    font-size: 5rem;
+    font-family: Cubano;
+}
+@media all and (min-width:320px) and (max-width:576px){
+    .content h2{
+        font-size: 2rem !important;
+    }
+}

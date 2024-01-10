@@ -1,0 +1,24 @@
+.retro{
+    font-family: Cubano;
+    color: var(--white);
+    font-size: 28px;
+    text-transform: uppercase;
+    padding: 0px 10px 6px 10px;
+    border-radius: 6px;
+    letter-spacing: 4px;
+}
+.retro:hover, .retro:focus, .retor:focus-visible{
+    color: var(--white) !important;
+}
+.menus a{
+    color: var(--white);
+    font-family: cubano;
+    font-size: 19px;
+}
+
+@media all and (min-width:320px) and (max-width:576px){
+    .retro{
+        font-size: 22px;
+        margin: auto;
+    }
+}
