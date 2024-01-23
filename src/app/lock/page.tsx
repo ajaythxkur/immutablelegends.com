@@ -4,6 +4,7 @@ import "./page.css"
 import { WalletSelector } from "@aptos-labs/wallet-adapter-ant-design";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
+import _ from "lodash";
 export default function Page() {
     const aptosConfig = new AptosConfig({ network: Network.MAINNET });
     const aptos = new Aptos(aptosConfig);
@@ -16,24 +17,35 @@ export default function Page() {
             setNfts([])
             return
         }
-        const immu = tokens.filter((tkn) => {
+        const immu = _.filter(tokens, (tkn) => {
             return tkn.current_token_data?.current_collection?.creator_address === "0x8869f49c4a9fd52eb5eb77da82da2a70cf098ce63010e515e610c0da7593419e"
         });
+        
         if (immu.length == 0) {
             setNfts([])
             return
         }
-        setNfts(immu);
+        const newMap = await Promise.all(_.map(immu, async(nft)=>{
+            const image = await fetchTokenImage(nft?.current_token_data?.token_uri!)
+            return {
+                image
+            }
+        }));
+        setNfts(newMap);
     };
-    const fetchTokenImage = (ipfsLink: string) => {
-        const pngLink = ipfsLink.replace(".json", ".png");
-        //pending
-        return pngLink;
+    const fetchTokenImage = async(ipfsLink: string) => {
+        const replacedLink = ipfsLink.replace("ipfs://","");
+        const response = await fetch(`https://ipfs.io/ipfs/${replacedLink}`);
+        if(response.ok){
+            const metadata = await response.json();
+            return metadata.image.replace("ipfs://","https://nftstorage.link/ipfs/");
+        }
+        return null;
     }
+    console.log(nfts)
     useEffect(() => {
         fetchOwnedTokens()
     }, [account?.address])
-    console.log(nfts)
     return (
         <React.Fragment>
             <section className='staking'>
@@ -54,21 +66,14 @@ export default function Page() {
                             nfts.map((token_data, index) => (
                                 <div className="col-md-4" key={index}>
                                     <div className="nft-box p-4">
-                                        {
-                                            fetchTokenImage(token_data?.current_token_data?.token_uri)
-                                            &&
-                                            <img src={fetchTokenImage(token_data?.current_token_data?.token_uri)} className="img-fluid" />
-
-                                        }
+                                        <img alt="nft" src={token_data.image} className="img-fluid" />
                                         <button className="btn w-100 mt-2">Lock</button>
                                         <button className="btn w-100 mt-2" disabled>Claim</button>
                                     </div>
                                 </div>
                             ))
                         }
-
                     </div>
-
                 </div>
             </section>
         </React.Fragment>

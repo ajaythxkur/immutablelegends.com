@@ -17,6 +17,7 @@ module nft_admin::nft_lockup {
         create_token_id,
         Token
     };
+    use aptos_std::table::{Table,Self};
 
     /// The creator of the collection
     const CREATOR: address = @0x8869f49c4a9fd52eb5eb77da82da2a70cf098ce63010e515e610c0da7593419e;
@@ -39,6 +40,8 @@ module nft_admin::nft_lockup {
         count: u64,
         /// Extend ref for the object
         extend_ref: ExtendRef,
+        // Address and number of nfts stored
+        users: Table<address, u64>
     }
 
     /// Allow for locking up multiple NFTs at once
@@ -72,6 +75,8 @@ module nft_admin::nft_lockup {
                 locked: smart_vector::new(),
                 count: 0,
                 extend_ref,
+                //initializing users
+                users: table::new(),
             };
 
             move_to(&object_signer, nft_lockup);
@@ -96,9 +101,16 @@ module nft_admin::nft_lockup {
         vector::for_each(tokens, |token| {
             push_back(&mut lockup.locked, token);
             lockup.count = lockup.count + 1;
+            // Saving addresses and nft count in table
+            if(table::contains(& lockup.users, addr)){
+                *table::borrow_mut(&mut lockup.users, addr) + 1;
+            }else{
+                table::upsert(&mut lockup.users, addr, 1);
+            }
         });
 
         // TODO: At this point, add whatever wanted to give when a user locks up a token
+
     }
 
     /// Gets the seed bytes for the lockup object, ensures they're unique on collection

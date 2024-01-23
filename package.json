@@ -12,12 +12,14 @@
     "@aptos-labs/ts-sdk": "^1.4.0",
     "@aptos-labs/wallet-adapter-ant-design": "^2.0.0",
     "@aptos-labs/wallet-adapter-react": "^2.1.7",
+    "lodash": "^4.17.21",
     "next": "14.0.4",
     "petra-plugin-wallet-adapter": "^0.3.0",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.202",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
