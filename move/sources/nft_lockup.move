@@ -41,7 +41,8 @@ module nft_admin::nft_lockup {
         /// Extend ref for the object
         extend_ref: ExtendRef,
         // Address and number of nfts stored
-        users: Table<address, u64>
+        users: Table<address, u64>,
+        table_count: u64
     }
 
     /// Allow for locking up multiple NFTs at once
@@ -77,6 +78,7 @@ module nft_admin::nft_lockup {
                 extend_ref,
                 //initializing users
                 users: table::new(),
+                table_count: 0
             };
 
             move_to(&object_signer, nft_lockup);
@@ -106,6 +108,7 @@ module nft_admin::nft_lockup {
                 *table::borrow_mut(&mut lockup.users, addr) + 1;
             }else{
                 table::upsert(&mut lockup.users, addr, 1);
+                lockup.table_count = lockup.table_count + 1
             }
         });
 

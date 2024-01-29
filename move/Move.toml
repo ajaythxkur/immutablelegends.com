@@ -4,7 +4,7 @@ version = "1.0.0"
 authors = []
 
 [addresses]
-nft_admin = "0x123"
+nft_admin = "0x7d7a8226bce849b935a89cd4adbbebe104e68759b55f2c09ad0ca43000cefbb1"
 
 [dev-addresses]
 

@@ -1,18 +1,19 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./page.css"
 import { WalletSelector } from "@aptos-labs/wallet-adapter-ant-design";
 import { InputTransactionData, useWallet } from "@aptos-labs/wallet-adapter-react";
-import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
+import { Aptos, AptosConfig, Network, InputViewRequestData } from "@aptos-labs/ts-sdk";
 import _ from "lodash";
 import "@aptos-labs/wallet-adapter-ant-design/dist/index.css";
-export const moduleAddress = "0xc21eef93e0188165bc9f303e7f8b7f24064db5e6981d1cd092ee4a4b84ac38af"; //example address to be changed
+const moduleAddress = "0x7d7a8226bce849b935a89cd4adbbebe104e68759b55f2c09ad0ca43000cefbb1"; //example address to be changed
 export default function Page() {
     const aptosConfig = new AptosConfig({ network: Network.MAINNET });
     const aptos = new Aptos(aptosConfig);
     const { account, signAndSubmitTransaction } = useWallet();
     const [nfts, setNfts] = useState<any[]>([]);
     const [transactionInProgress, setTransactionInProgress] = useState<boolean>(false);
+    const [lockedNftCount, setLockedNftCount] = useState<number>(0);
     const fetchOwnedTokens = async () => {
         if (!account) return;
         const tokens = await aptos.getOwnedDigitalAssets({ ownerAddress: account.address });
@@ -49,8 +50,9 @@ export default function Page() {
     const onLock = async (token_name: string) => {
         if (!account) return;
         try {
+            console.log(token_name)
             setTransactionInProgress(true)
-            const arg = [token_name];
+            const arg = ["Immutable Legends"];
             const transaction: InputTransactionData = {
                 data: {
                     function: `${moduleAddress}::nft_lockup::lockup_nfts`,
@@ -68,8 +70,39 @@ export default function Page() {
             setTransactionInProgress(false)
         }
     }
+    const fetchViewFunction = async() => {
+        try{
+            const locked_count_payload: InputViewRequestData = {
+                function: `${moduleAddress}::nft_lockup::num_locked`,
+                // typeArguments: ,
+                functionArguments: [moduleAddress],
+            }
+            const num_locked = await aptos.view({payload: locked_count_payload});
+            if(Array.isArray(num_locked) && typeof num_locked[0] == "string"){
+                setLockedNftCount(Number(num_locked[0]));
+            }
+        }catch(error:any){
+            console.log("error", error)
+        }
+    }
+    const fetchAccountResource = async() =>{
+        try{
+            setTransactionInProgress(true)
+            let nftLockupResource = await aptos.getAccountResource({
+                accountAddress: moduleAddress,
+                resourceType: `${moduleAddress}::nft_lockup::NFTLockup`
+            });
+            console.log(nftLockupResource)
+        }catch(error: any){
+            console.log("error", error)
+        }finally{
+            setTransactionInProgress(false)
+        }
+    }
     useEffect(() => {
         fetchOwnedTokens()
+        fetchViewFunction()
+        fetchAccountResource()
     }, [account?.address])
     return (
         <React.Fragment>
@@ -83,7 +116,7 @@ export default function Page() {
                                 </div>
                                 <h3 className='mb-2'>& <br />For Legend</h3>
                                 <WalletSelector />
-                                <h3 className='mb-2'>Total NFTs Locked: 10</h3>
+                                <h3 className='mb-2'>Total NFTs Locked: {lockedNftCount}</h3>
                             </div>
                         </div>
                         {

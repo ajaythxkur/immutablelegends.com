@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    image: {
+    images: {
         domains: ['nftstorage.link'],
-    },
+    }
 }
 
 module.exports = nextConfig
