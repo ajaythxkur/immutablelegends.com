@@ -26,7 +26,11 @@ const animate_text = (event: any, value: String) => {
     }, 30)
 
 }
+const capitalizeUnderScoredStr = (str: string) => {
+    return str.split("_").join(" ");
+}
 export {
     random_color,
-    animate_text
+    animate_text,
+    capitalizeUnderScoredStr
 }

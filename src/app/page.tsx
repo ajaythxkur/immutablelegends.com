@@ -11,9 +11,9 @@ export default function Page() {
           <div className="row justify-content-center">
             <div className="col-md-6">
               <div className="content text-center">
+                <h2 className="text-uppercase mb-0" style={{color: random_color()}} onMouseOver={(e) => animate_text(e, "We")}>We</h2>
+                <h2 className="text-uppercase mb-0" style={{color: random_color()}} onMouseOver={(e) => animate_text(e, "Are")}>Are</h2>
                 <h2 className="text-uppercase mb-0" style={{color: random_color()}} onMouseOver={(e) => animate_text(e, "Legends")}>Legends</h2>
-                <h2 className="text-uppercase mb-0" style={{color: random_color()}} onMouseOver={(e) => animate_text(e, "Coming To")}>Coming To</h2>
-                <h2 className="text-uppercase mb-0" style={{color: random_color()}} onMouseOver={(e) => animate_text(e, "Aptos")}>Aptos</h2>
               </div>
             </div>
           </div>
