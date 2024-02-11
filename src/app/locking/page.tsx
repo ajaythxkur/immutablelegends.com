@@ -14,6 +14,11 @@ type LockData = {
     num_users_locked: number, //number of users locked
 }
 
+const keyMeaning = {
+    total_locked: "Total Locked NFTs",
+    num_locked: "Your NFTs Lock Count",
+    num_users_locked: "Total Users"
+}
 
 export default function Page() {
     const LOCK_CONTRACT_ADDRESS = process.env.LOCK_CONTRACT_ADDRESS?.toString();
@@ -21,7 +26,7 @@ export default function Page() {
     const TOTAL_NFTS = 1212;
     const COLLECTION_NAME = "Immutable Legends"
 
-    const aptosConfig = new AptosConfig({ network: Network.DEVNET });
+    const aptosConfig = new AptosConfig({ network: Network.MAINNET });
     const aptos = new Aptos(aptosConfig);
 
     const { account, signAndSubmitTransaction } = useWallet();
@@ -136,7 +141,6 @@ export default function Page() {
             }
             return null;
         } catch (error) {
-            console.log(str)
             return str;
         }
 
@@ -163,7 +167,7 @@ export default function Page() {
                             _.map(Object.keys(viewData) as (keyof LockData)[], (key, index) => (
                                 <div className="col-md-4" key={index}>
                                     <div className="info-box p-4 m-2" key={index} style={{backgroundColor:`${random_color()}`, borderColor:`${random_color()}`}}>
-                                        <h4 className="mb-3 cubano">{capitalizeUnderScoredStr(key)}</h4>
+                                        <h4 className="mb-3 cubano">{keyMeaning[key]}</h4>
                                         <p>{viewData[key]}</p>
                                     </div>
                                 </div>
